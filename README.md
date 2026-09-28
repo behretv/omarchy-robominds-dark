@@ -1,8 +1,7 @@
 # omarchy-robominds-dark
 
-Omarchy theme for robominds, using the official robominds brand colors extracted from the [living style guide](https://brand.robominds.de).
-
-The color scheme is extracted directly from the style guide's `tokens.css` (the Single Source of Truth for all robominds design tokens). When the style guide is updated, re-running the update script pulls the latest colors.
+A dark Omarchy theme using the official robominds brand colors, extracted from
+the [robominds living style guide](https://brand.robominds.de).
 
 ## Install
 
@@ -10,70 +9,65 @@ The color scheme is extracted directly from the style guide's `tokens.css` (the 
 omarchy theme install https://github.com/<org>/omarchy-robominds-dark.git
 ```
 
-Or via the Makefile:
+Or clone manually:
 
 ```bash
-make install    # clone + apply
-make update     # pull latest + re-apply
-make apply TOKENS=/path/to/tokens.css   # regenerate from style guide + re-apply
-make apply URL=https://brand.robominds.de
+git clone https://github.com/<org>/omarchy-robominds-dark.git \
+  ~/.config/omarchy/themes/robominds-dark
+omarchy theme set robominds-dark
 ```
 
-## Update the theme
+## How it works
+
+This repo doubles as:
+
+1. **An installable Omarchy theme** — the repo root is the theme directory.
+   `colors.toml` is the only required file; Omarchy auto-generates terminal
+   configs, VS Code theme, Neovim (aether) config, shell colors, and more from
+   it via templates on `omarchy theme set`.
+
+2. **A build tool** — the [`theme/`](theme/) directory contains
+   `palette.py` (the single source of truth: every color as dataclasses) and
+   `theme_omarchy.py`, a generator that maps semantic roles onto those shades
+   and renders `colors.toml`, `shell.lock.toml`, and `keyboard.rgb`. Edit
+   colors in one place, regenerate.
+
+```
+omarchy-robominds-dark/
+├── colors.toml           ← generated: the omarchy quattro color file
+├── shell.lock.toml       ← generated: shell lock screen colors
+├── keyboard.rgb          ← generated: keyboard RGB accent (hex without #)
+├── backgrounds/          ← wallpaper images (add your own)
+├── icons.theme           ← icon theme name
+├── preview.png           ← theme picker preview
+├── unlock.png            ← lock screen image
+├── LICENSE
+├── README.md             ← you are here
+├── .gitignore
+├── tests/                ← pytest suite for the palette + generator
+└── theme/                ← build tooling (not part of the installed theme)
+    ├── palette.py        ← single source of truth: all colors as dataclasses
+    ├── theme_omarchy.py  ← maps roles to palette shades, writes theme files
+    └── README.md         ← build tool docs
+```
+
+## Regenerating the theme files
 
 ```bash
-# Prerequisites: Python 3.11+
+# writes colors.toml, shell.lock.toml, keyboard.rgb to repo root
+python -m theme.theme_omarchy
 
-# Generate theme files from a local style guide
-python scripts/update_theme.py --tokens tmp/robominds-styleguide/css/tokens.css
-
-# From the live style guide URL
-python scripts/update_theme.py --url https://brand.robominds.de
+# or to a custom output directory
+python -m theme.theme_omarchy --out-dir dist
 ```
 
-This generates:
-- `colors.toml` — terminal colors (quattro format with semantic names)
-- `shell.lock.toml` — shell lock screen colors
-- `keyboard.rgb` — keyboard RGB accent color
+Requires Python 3.11+ and the `toml` package (`pip install toml`). Run the test
+suite with `python -m pytest`.
 
-`colors.toml` is the only file the installed theme needs: omarchy generates every per-app config (VS Code, Neovim, terminals, ...) from it via templates on `omarchy theme set`.
+## Adding backgrounds
 
-## Color mapping
-
-The robominds style guide tokens map to the omarchy quattro theme as follows:
-
-| Theme key | CSS token | Description |
-|-----------|-----------|-------------|
-| `accent` | `--rm-blue-400` | robominds Blue (primary) |
-| `selection` | `--rm-navy-grey-1` | Selection background |
-| `muted` | `#6B6B6B` | Muted UI elements / comments |
-| `background` | `--rm-navy-grey-1` | Main background |
-| `dark_background` | `--rm-navy-grey-2` | Darker background |
-| `darker_background` | `#0A0A0A` | Darkest background |
-| `lighter_background` | `--rm-blue-900` | Lighter background |
-| `foreground` | `--rm-gray-300` | Main foreground |
-| `dark_foreground` | `--rm-gray-700` | Dimmed foreground |
-| `light_foreground` | `--rm-gray-400` | Brighter foreground |
-| `bright_foreground` | `--rm-gray-200` | Brightest foreground |
-| `red` / `bright_red` | `--rm-red-300` / `--rm-red-500` | Red family |
-| `yellow` / `bright_yellow` | `--rm-yellow-300` / `--rm-yellow-500` | Yellow family |
-| `orange` | `--rm-orange-500` | Orange |
-| `green` / `bright_green` | `--rm-green-300` / `--rm-green-500` | Green family |
-| `cyan` / `bright_cyan` | `--rm-teal-300` / `--rm-teal-500` | Teal family |
-| `blue` / `bright_blue` | `--rm-blue-400` / `--rm-blue-500` | Blue family |
-| `magenta` / `bright_magenta` | `--rm-violet-300` | Violet family |
-| `brown` | `--rm-orange-700` | Dark orange |
-
-## Theme files
-
-| File | Purpose |
-|------|---------|
-| `colors.toml` | Terminal colors (quattro semantic format) — the only file omarchy needs; it generates per-app configs from it |
-| `shell.lock.toml` | Shell lock screen colors |
-| `keyboard.rgb` | Keyboard RGB accent color |
-| `icons.theme` | Icon theme name |
-| `backgrounds/` | Wallpaper images |
-| `unlock.png` | Lock screen image |
+Drop wallpaper images into `backgrounds/` (jpg, png, webp). Omarchy cycles
+through them with `omarchy theme bg next`.
 
 ## License
 

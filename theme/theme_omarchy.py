@@ -35,18 +35,17 @@ HERE = Path(__file__).resolve().parent
 class ThemeOmarchy:
     """Semantic roles -> shades, in ``colors.toml`` emission order.
 
-    Backgrounds/foregrounds use the dark-mode navy-tinted surfaces and text;
-    terminal colors use the brand families (lighter shades read better on dark
-    ground). See :class:`palette.DarkMode`.
+    Backgrounds/foregrounds use the dark navy-tinted neutrals; terminal colors
+    use the brand families (lighter shades read better on dark ground).
     """
 
     mode: str = "dark"
-    accent: str = palette.Blue.s400
-    selection: str = palette.Blue.s800
-    muted: str = "#6B6B6B"  # deliberate blend — comments (shared with light)
+    accent: str = palette.Blue.s300
+    selection: str = palette.Blue.s700
+    muted: str = palette.Gray.muted
     background: str = palette.Gray.navy_gray_1
     dark_background: str = palette.Gray.navy_gray_2
-    darker_background: str = "#0A0A0A"  # deepest navy — no brand shade this dark
+    darker_background: str = palette.Gray.near_black
     lighter_background: str = palette.Blue.s800
     foreground: str = palette.Gray.s300
     dark_foreground: str = palette.Gray.s700
@@ -57,14 +56,14 @@ class ThemeOmarchy:
     orange: str = palette.Orange.s500
     green: str = palette.Green.s300
     cyan: str = palette.Teal.s300
-    blue: str = palette.Blue.s400
+    blue: str = palette.Blue.s300
     magenta: str = palette.Violet.s300
     brown: str = palette.Orange.s700
     bright_red: str = palette.Red.s500
     bright_yellow: str = palette.Yellow.s500
     bright_green: str = palette.Green.s500
     bright_cyan: str = palette.Teal.s500
-    bright_blue: str = palette.Blue.s500
+    bright_blue: str = palette.Blue.s400
     bright_magenta: str = palette.Magenta.s500
 
 
@@ -76,7 +75,7 @@ class ShellLock:
     placeholder: str = palette.Gray.s700
     text_error: str = palette.Red.s500
     border: str = palette.Gray.s700
-    border_active: str = palette.Blue.s400
+    border_active: str = palette.Blue.s300
     border_error: str = palette.Red.s500
 
 
@@ -99,7 +98,7 @@ def generate_shell_lock_toml(lock: ShellLock) -> str:
 
 def generate_keyboard_rgb() -> str:
     """Keyboard RGB accent — the accent color as hex without ``#``."""
-    return palette.Blue.s400.lstrip("#") + "\n"
+    return palette.Blue.s300.lstrip("#") + "\n"
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -120,9 +119,13 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = args.out_dir or HERE.parent
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    (out_dir / "colors.toml").write_text(generate_colors_toml(ThemeOmarchy()), encoding="utf-8")
+    (out_dir / "colors.toml").write_text(
+        generate_colors_toml(ThemeOmarchy()), encoding="utf-8"
+    )
     print(f"  ✓ colors.toml: {out_dir / 'colors.toml'}")
-    (out_dir / "shell.lock.toml").write_text(generate_shell_lock_toml(ShellLock()), encoding="utf-8")
+    (out_dir / "shell.lock.toml").write_text(
+        generate_shell_lock_toml(ShellLock()), encoding="utf-8"
+    )
     print(f"  ✓ shell.lock.toml: {out_dir / 'shell.lock.toml'}")
     (out_dir / "keyboard.rgb").write_text(generate_keyboard_rgb(), encoding="utf-8")
     print(f"  ✓ keyboard.rgb: {out_dir / 'keyboard.rgb'}")

@@ -4,8 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from theme.palette import Blue, DarkMode, Gray, Green, Magenta, Red, Teal, Yellow
-
+from theme.palette import Blue, Gray, Green, Magenta, Red, Teal, Yellow
 
 # ---------------------------------------------------------------------------
 # Brand families hold the CI shades as fields (identical to the light theme)
@@ -38,6 +37,8 @@ def test_gray_includes_named_neutrals_alongside_shades():
     assert gray.white == "#FFFFFF"
     assert gray.navy_gray_1 == "#1D2731"
     assert gray.navy_gray_2 == "#0E0E13"
+    assert gray.near_black == "#0A0A0A"  # darkest background (dark theme only)
+    assert gray.muted == "#6B6B6B"  # blend of s700/s400, not a raw brand shade
 
 
 def test_red_family_has_100_300_500_700():
@@ -56,66 +57,29 @@ def test_teal_has_no_s100():
     assert teal.s700 == "#0B5C5C"
 
 
+def test_magenta_family():
+    magenta = Magenta()
+    assert magenta.s100 == "#F6E7F2"
+    assert magenta.s300 == "#C97FB8"
+    assert magenta.s500 == "#A63A8F"
+    assert magenta.s700 == "#7A2968"
+
+
+def test_visualization_colors_from_styleguide():
+    # Data-viz / overlay colors from the robominds styleguide, per family.
+    assert Red().visualize == "#FF3B30"  # overlay: collision
+    assert Red().diverge_neg == "#E06E6E"  # diverging: below target
+    assert Gray().diverge_mid == "#F0EFEC"  # diverging: within target
+    assert Gray().visualize == "#8C8C8C"  # overlay: excluded
+    assert Blue().visualize == "#3D9BF0"  # diverging: above target
+    assert Blue().info_bg == "#E6F2FC"  # status: info background
+    assert Green().visualize == "#00FF85"  # overlay: target pose
+    assert Teal().visualize == "#00E5FF"  # overlay: selected (cyan)
+    assert Yellow().visualize == "#FFD400"  # overlay: candidate
+    assert Yellow().categorical == "#F2C230"  # cat-5 chart area
+
+
 def test_families_are_immutable():
     # frozen dataclass: mutation raises
     with pytest.raises(Exception):
         Blue().s50 = "#000000"  # type: ignore[misc]
-
-
-# ---------------------------------------------------------------------------
-# Dark mode — dark-specific semantic colors from [data-theme="dark"]
-# ---------------------------------------------------------------------------
-
-
-def test_dark_mode_surfaces_are_navy_tinted_not_black():
-    d = DarkMode()
-    assert d.bg == "#0E1830"
-    assert d.surface == "#161F35"
-    assert d.surface_2 == "#1E2842"
-    assert d.surface_3 == "#27324F"
-    # never pure black
-    for v in (d.bg, d.surface, d.surface_2, d.surface_3):
-        assert v != "#000000"
-
-
-def test_dark_mode_text_is_light_not_pure_white():
-    d = DarkMode()
-    assert d.text == "#F2F4F8"
-    assert d.text_muted == "#A8B2C4"
-    assert d.text_subtle == "#7A879E"
-    assert d.text_on_accent == "#071022"
-    # never pure white (avoids halation on dark ground)
-    assert d.text != "#FFFFFF"
-
-
-def test_dark_mode_primary_uses_lighter_blue():
-    d = DarkMode()
-    assert d.primary == "#2593F4"  # blue-500
-    assert d.primary_hover == "#64B7F7"  # blue-400
-    assert d.primary_active == "#0073D7"  # blue-600
-    assert d.primary_subtle == "#1A2C52"
-
-
-def test_dark_mode_status_colors_are_lightened():
-    d = DarkMode()
-    assert d.success == "#3DBE6E"
-    assert d.warning == "#F4C64D"
-    assert d.danger == "#F27272"
-    assert d.info == "#4BA5F6"
-    assert d.neutral == "#8B97AC"
-    assert d.success_bg == "#12301F"
-    assert d.warning_bg == "#322608"
-    assert d.danger_bg == "#351515"
-    assert d.info_bg == "#0F2743"
-    assert d.neutral_bg == "#1E2842"
-
-
-def test_dark_mode_borders_and_links():
-    d = DarkMode()
-    assert d.border == "#2A3550"
-    assert d.border_strong == "#3E4C6E"
-    assert d.link == "#64B7F7"
-    assert d.link_hover == "#94D1F9"
-    assert d.link_visited == "#B79BE8"
-    assert d.selection_bg == "#23407A"
-    assert d.selection_fg == "#F2F4F8"

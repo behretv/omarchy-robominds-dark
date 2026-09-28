@@ -1,17 +1,7 @@
 """robominds dark theme — single source of truth + generator."""
 
-from .palette import (
-    Blue,
-    DarkMode,
-    Gray,
-    Green,
-    Magenta,
-    Orange,
-    Red,
-    Teal,
-    Violet,
-    Yellow,
-)
+from .palette import Blue, Gray, Green, Magenta, Orange, Red, Teal, Violet, Yellow
+
 
 # Imported lazily so `python -m theme.theme_omarchy` does not trip a runpy
 # RuntimeWarning (the package __init__ would otherwise load the module before
@@ -26,7 +16,6 @@ def __getattr__(name):  # PEP 562
 
 __all__ = [
     "Blue",
-    "DarkMode",
     "Gray",
     "Green",
     "Magenta",
