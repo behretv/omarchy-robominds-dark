@@ -6,11 +6,10 @@ in one place (`palette.py`) and generates the theme files from it.
 ## Quick start
 
 ```bash
-# default: writes colors.toml, shell.lock.toml, keyboard.rgb to repo root
-python -m theme.theme_omarchy
-
-# or to a custom output directory
-python -m theme.theme_omarchy --out-dir dist
+# each generator writes its file to the repo root
+python -m theme.colors_toml        # colors.toml
+python -m theme.shell_lock_toml    # shell.lock.toml
+python -m theme.keyboard_rgb       # keyboard.rgb
 
 # run the test suite
 python -m pytest
@@ -20,7 +19,8 @@ Requires Python 3.11+ and the `toml` package (`pip install toml`).
 
 ## Output
 
-The generator renders three files (repo root by default):
+One tiny generator per output file — no arguments, fixed input (the palette)
+and output (the repo root):
 
 | File | Purpose |
 |------|---------|
@@ -50,15 +50,15 @@ palette contains every color the theme uses.
 | `Magenta`| 100, 300, 500, 700 |
 | `Teal`   | 300, 500, 700 (no 100) |
 
-The dark role mapping itself lives in the generator (`theme_omarchy.py`):
-backgrounds/foregrounds use the navy-tinted neutrals, terminal colors use the
-brand families (lighter shades read better on dark ground).
+The dark role mapping itself lives in the generators (`colors_toml.py`,
+`shell_lock_toml.py`): backgrounds/foregrounds use the navy-tinted neutrals,
+terminal colors use the brand families (lighter shades read better on dark
+ground).
 
-**To change a color:** edit the hex value in `palette.py` and re-run
-`python -m theme.theme_omarchy`. The generator (`theme_omarchy.py`) maps each
-semantic role onto a specific palette shade via the `ThemeOmarchy` and
-`ShellLock` dataclasses; point a field at a different shade if you want a role
-to use one.
+**To change a color:** edit the hex value in `palette.py` and re-run the
+generators. Each maps semantic roles onto specific palette shades via its
+dataclass (`ThemeOmarchy`, `ShellLock`); point a field at a different shade if
+you want a role to use one.
 
 ## Programmatic API
 

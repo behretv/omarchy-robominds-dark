@@ -29,7 +29,9 @@ update:
 	omarchy theme set $(THEME_SLUG)
 
 apply:
-	$(PYTHON) theme/theme_omarchy.py
+	$(PYTHON) theme/colors_toml.py
+	$(PYTHON) theme/shell_lock_toml.py
+	$(PYTHON) theme/keyboard_rgb.py
 ifeq ($(wildcard $(THEME_DIR)/.git),)
 	$(error theme not installed at $(THEME_DIR); run 'make install' first)
 endif

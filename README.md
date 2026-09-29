@@ -27,10 +27,9 @@ This repo doubles as:
    it via templates on `omarchy theme set`.
 
 2. **A build tool** — the [`theme/`](theme/) directory contains
-   `palette.py` (the single source of truth: every color as dataclasses) and
-   `theme_omarchy.py`, a generator that maps semantic roles onto those shades
-   and renders `colors.toml`, `shell.lock.toml`, and `keyboard.rgb`. Edit
-   colors in one place, regenerate.
+   `palette.py` (the single source of truth: every color as dataclasses) plus
+   one tiny generator per output file (`colors_toml.py`, `shell_lock_toml.py`,
+   `keyboard_rgb.py`). Edit colors in one place, regenerate.
 
 ```
 omarchy-robominds-dark/
@@ -47,18 +46,18 @@ omarchy-robominds-dark/
 ├── tests/                ← pytest suite for the palette + generator
 └── theme/                ← build tooling (not part of the installed theme)
     ├── palette.py        ← single source of truth: all colors as dataclasses
-    ├── theme_omarchy.py  ← maps roles to palette shades, writes theme files
+    ├── colors_toml.py    ← roles -> shades, writes colors.toml
+    ├── shell_lock_toml.py← writes shell.lock.toml
+    ├── keyboard_rgb.py   ← writes keyboard.rgb
     └── README.md         ← build tool docs
 ```
 
 ## Regenerating the theme files
 
 ```bash
-# writes colors.toml, shell.lock.toml, keyboard.rgb to repo root
-python -m theme.theme_omarchy
-
-# or to a custom output directory
-python -m theme.theme_omarchy --out-dir dist
+python -m theme.colors_toml        # writes colors.toml to repo root
+python -m theme.shell_lock_toml    # writes shell.lock.toml
+python -m theme.keyboard_rgb       # writes keyboard.rgb
 ```
 
 Requires Python 3.11+ and the `toml` package (`pip install toml`). Run the test
